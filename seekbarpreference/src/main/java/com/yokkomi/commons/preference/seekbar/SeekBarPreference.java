@@ -206,6 +206,5 @@ public class SeekBarPreference extends DialogPreference implements SeekBar.OnSee
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
-        saveCurrentValue();
     }
 }
