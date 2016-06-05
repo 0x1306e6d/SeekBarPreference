@@ -1,4 +1,4 @@
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~    Copyright 2016 com.yokkomi
   ~
   ~    Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,10 +14,16 @@
   ~    limitations under the License.
   -->
 
-<resources>
-    <string name="app_name">SeekBarPreferenceExample</string>
-    <string name="seekbarpreference">SeekBarPreference</string>
-    <string name="seekbarpreference_summary">Basic SeekBarPreference Example</string>
-    <string name="seekbarpreference_explain">좌 우로 SeekBar을 움직이십시오.</string>
-    <string name="settings">Settings</string>
-</resources>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.yokkomi.commons.preference.seekbar.SeekBarPreference
+        android:defaultValue="0"
+        android:key="@string/seekbarpreference"
+        android:summary="@string/seekbarpreference_summary"
+        android:title="@string/seekbarpreference"
+        app:explain="@string/seekbarpreference_explain"
+        app:maxValue="30"
+        app:padding="3"
+        app:unit="KM" />
+</PreferenceScreen>
