@@ -19,6 +19,7 @@ package com.yokkomi.commons.preference.seekbar;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;
@@ -205,9 +206,7 @@ public class FollowSeekBarPreference extends DialogPreference implements SeekBar
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         setCurrentValue(progress);
-
-        float x = seekBar.getThumb().getBounds().exactCenterX();
-        valueLayout.setX(x);
+        valueLayout.setX(calculateThumbX());
     }
 
     @Override
@@ -216,5 +215,13 @@ public class FollowSeekBarPreference extends DialogPreference implements SeekBar
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
+    }
+
+    private float calculateThumbX() {
+        float x;
+        Drawable thumb = seekBar.getThumb();
+        float centerX = thumb.getBounds().exactCenterX();
+        x = centerX - (thumb.getBounds().width() / 2.0f);
+        return x;
     }
 }
