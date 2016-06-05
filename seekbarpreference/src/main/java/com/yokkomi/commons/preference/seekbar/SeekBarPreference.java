@@ -25,6 +25,7 @@ import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -127,9 +128,9 @@ public class SeekBarPreference extends DialogPreference {
     }
 
     private void clearParents() {
-        ViewGroup parent = (ViewGroup) seekBar.getParent();
-        if (parent != null) {
-            parent.removeAllViews();
+        ViewParent oldParent = seekBar.getParent();
+        if (oldParent != null) {
+            ((ViewGroup) oldParent).removeAllViews();
         }
     }
 
