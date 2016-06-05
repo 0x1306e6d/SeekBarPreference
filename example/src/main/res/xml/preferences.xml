@@ -22,6 +22,7 @@
         android:summary="@string/seekbarpreference_summary"
         android:title="@string/seekbarpreference"
         app:explain="@string/seekbarpreference_explain"
+        app:maxValue="30"
         app:padding="3"
         app:unit="KM" />
 </PreferenceScreen>

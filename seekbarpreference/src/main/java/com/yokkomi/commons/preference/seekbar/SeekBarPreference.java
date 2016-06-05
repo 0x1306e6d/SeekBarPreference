@@ -30,16 +30,17 @@ import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-public class SeekBarPreference extends DialogPreference {
+public class SeekBarPreference extends DialogPreference implements SeekBar.OnSeekBarChangeListener {
 
     private static final String TAG = SeekBarPreference.class.getSimpleName();
     private static final String ANDROID = "http://schemas.android.com/apk/res/android";
 
     private int padding;
+    private int maxValue;
     private String unit;
     private String explain;
 
-    private double currentValue;
+    private int currentValue;
     private SeekBar seekBar;
     private TextView valueText;
     private TextView unitText;
@@ -74,9 +75,10 @@ public class SeekBarPreference extends DialogPreference {
     private void configure(Context context, AttributeSet attrs) {
         TypedArray attributes = context.obtainStyledAttributes(attrs, R.styleable.SeekBarPreference);
         try {
-            padding = attributes.getInt(R.styleable.SeekBarPreference_padding, 0);
+            maxValue = attributes.getInt(R.styleable.SeekBarPreference_maxValue, 100);
             unit = attributes.getString(R.styleable.SeekBarPreference_unit);
             explain = attributes.getString(R.styleable.SeekBarPreference_explain);
+            padding = attributes.getInt(R.styleable.SeekBarPreference_padding, 0);
         } finally {
             attributes.recycle();
         }
@@ -84,6 +86,9 @@ public class SeekBarPreference extends DialogPreference {
 
     private void init(Context context, AttributeSet attrs) {
         seekBar = new SeekBar(context, attrs);
+        seekBar.setMax(maxValue);
+        seekBar.setOnSeekBarChangeListener(this);
+
         valueText = new TextView(context);
         valueText.setText(String.valueOf(currentValue));
 
@@ -95,6 +100,16 @@ public class SeekBarPreference extends DialogPreference {
         valueLayout.setGravity(Gravity.CENTER);
         valueLayout.addView(valueText);
         valueLayout.addView(unitText);
+    }
+
+    /**
+     * Set currentValue.
+     *
+     * @param currentValue The value to save
+     */
+    public void setCurrentValue(int currentValue) {
+        this.currentValue = currentValue;
+        this.valueText.setText(String.valueOf(currentValue));
     }
 
     @Override
@@ -134,4 +149,18 @@ public class SeekBarPreference extends DialogPreference {
         }
     }
 
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        setCurrentValue(progress);
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+
+    }
 }
