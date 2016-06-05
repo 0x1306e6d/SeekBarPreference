@@ -22,6 +22,7 @@ import android.content.res.TypedArray;
 import android.os.Build;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +34,6 @@ import android.widget.TextView;
 public class SeekBarPreference extends DialogPreference implements SeekBar.OnSeekBarChangeListener {
 
     private static final String TAG = SeekBarPreference.class.getSimpleName();
-    private static final String ANDROID = "http://schemas.android.com/apk/res/android";
 
     private int padding;
     private int maxValue;
@@ -105,11 +105,28 @@ public class SeekBarPreference extends DialogPreference implements SeekBar.OnSee
     /**
      * Set currentValue.
      *
-     * @param currentValue The value to save
+     * @param currentValue The value to set
      */
     public void setCurrentValue(int currentValue) {
         this.currentValue = currentValue;
         this.valueText.setText(String.valueOf(currentValue));
+    }
+
+    /**
+     * Save currentValue to the {@link android.content.SharedPreferences}.
+     */
+    public void saveCurrentValue() {
+        final boolean wasBlocking = shouldDisableDependents();
+
+        if (shouldPersist()) {
+            persistInt(currentValue);
+            Log.d(TAG, "Persist value " + currentValue);
+        }
+
+        final boolean isBlocking = shouldDisableDependents();
+        if (isBlocking != wasBlocking) {
+            notifyDependencyChange(isBlocking);
+        }
     }
 
     @Override
@@ -140,12 +157,40 @@ public class SeekBarPreference extends DialogPreference implements SeekBar.OnSee
         );
         layout.addView(valueLayout, params);
         layout.addView(seekBar, params);
+
+        updateView();
     }
 
     private void clearParents() {
         ViewParent oldParent = seekBar.getParent();
         if (oldParent != null) {
             ((ViewGroup) oldParent).removeAllViews();
+        }
+    }
+
+    private void updateView() {
+        valueText.setText(String.valueOf(currentValue));
+        seekBar.setProgress(currentValue);
+    }
+
+    @Override
+    protected void onDialogClosed(boolean positiveResult) {
+        super.onDialogClosed(positiveResult);
+
+        if (positiveResult) {
+            if (callChangeListener(currentValue)) {
+                saveCurrentValue();
+            }
+        }
+    }
+
+    @Override
+    protected void onSetInitialValue(boolean restorePersistedValue, Object defaultValue) {
+        if (restorePersistedValue) {
+            currentValue = getPersistedInt(currentValue);
+        } else {
+            currentValue = (int) defaultValue;
+            saveCurrentValue();
         }
     }
 
@@ -161,6 +206,6 @@ public class SeekBarPreference extends DialogPreference implements SeekBar.OnSee
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
-
+        saveCurrentValue();
     }
 }

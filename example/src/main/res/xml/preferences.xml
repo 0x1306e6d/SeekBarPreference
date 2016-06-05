@@ -19,6 +19,7 @@
 
     <com.yokkomi.commons.preference.seekbar.SeekBarPreference
         android:defaultValue="0"
+        android:key="@string/seekbarpreference"
         android:summary="@string/seekbarpreference_summary"
         android:title="@string/seekbarpreference"
         app:explain="@string/seekbarpreference_explain"
