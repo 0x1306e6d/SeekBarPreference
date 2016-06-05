@@ -21,4 +21,8 @@
         <attr name="explain" format="string" />
         <attr name="padding" format="integer" />
     </declare-styleable>
+
+    <declare-styleable name="FollowSeekBarPreference">
+        <attr name="followEverytime" format="boolean" />
+    </declare-styleable>
 </resources>

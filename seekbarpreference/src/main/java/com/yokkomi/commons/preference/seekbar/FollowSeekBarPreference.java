@@ -33,7 +33,7 @@ import android.widget.TextView;
 
 public class FollowSeekBarPreference extends DialogPreference implements SeekBar.OnSeekBarChangeListener {
 
-    private static final String TAG = SeekBarPreference.class.getSimpleName();
+    private static final String TAG = FollowSeekBarPreference.class.getSimpleName();
 
     private int padding;
     private int maxValue;
@@ -152,10 +152,16 @@ public class FollowSeekBarPreference extends DialogPreference implements SeekBar
         LinearLayout layout = (LinearLayout) view;
 
         params = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+        params.gravity = Gravity.CENTER_HORIZONTAL;
+        layout.addView(valueLayout, params);
+
+        params = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
         );
-        layout.addView(valueLayout, params);
         layout.addView(seekBar, params);
 
         updateView();
@@ -169,8 +175,8 @@ public class FollowSeekBarPreference extends DialogPreference implements SeekBar
     }
 
     private void updateView() {
-        valueText.setText(String.valueOf(currentValue));
         seekBar.setProgress(currentValue);
+        valueText.setText(String.valueOf(currentValue));
     }
 
     @Override
@@ -181,6 +187,8 @@ public class FollowSeekBarPreference extends DialogPreference implements SeekBar
             if (callChangeListener(currentValue)) {
                 saveCurrentValue();
             }
+        } else {
+            setCurrentValue(getPersistedInt(currentValue));
         }
     }
 
@@ -197,15 +205,16 @@ public class FollowSeekBarPreference extends DialogPreference implements SeekBar
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         setCurrentValue(progress);
+
+        float x = seekBar.getThumb().getBounds().exactCenterX();
+        valueLayout.setX(x);
     }
 
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
-
     }
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
-        saveCurrentValue();
     }
 }

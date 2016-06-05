@@ -33,6 +33,7 @@
         android:summary="@string/followseekbarpreference_summary"
         android:title="@string/followseekbarpreference"
         app:explain="@string/followseekbarpreference_explain"
+        app:followEverytime="true"
         app:maxValue="30"
         app:padding="3"
         app:unit="KM" />
