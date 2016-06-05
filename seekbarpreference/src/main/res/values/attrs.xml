@@ -1,4 +1,4 @@
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~    Copyright 2016 com.yokkomi
   ~
   ~    Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,7 +15,7 @@
   -->
 
 <resources>
-    <string name="app_name">SeekBarPreferenceExample</string>
-    <string name="seekbarpreference">SeekBarPreference</string>
-    <string name="settings">Settings</string>
+    <declare-styleable name="SeekBarPreference">
+        <attr name="padding" format="integer" />
+    </declare-styleable>
 </resources>

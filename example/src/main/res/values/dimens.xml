@@ -15,7 +15,7 @@
   -->
 
 <resources>
-    <string name="app_name">SeekBarPreferenceExample</string>
-    <string name="seekbarpreference">SeekBarPreference</string>
-    <string name="settings">Settings</string>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
 </resources>

@@ -1,4 +1,4 @@
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~    Copyright 2016 com.yokkomi
   ~
   ~    Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,8 +14,11 @@
   ~    limitations under the License.
   -->
 
-<resources>
-    <string name="app_name">SeekBarPreferenceExample</string>
-    <string name="seekbarpreference">SeekBarPreference</string>
-    <string name="settings">Settings</string>
-</resources>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.yokkomi.commons.preference.seekbar.SeekBarPreference
+        android:defaultValue="0"
+        android:title="@string/seekbarpreference"
+        app:padding="8" />
+</PreferenceScreen>
