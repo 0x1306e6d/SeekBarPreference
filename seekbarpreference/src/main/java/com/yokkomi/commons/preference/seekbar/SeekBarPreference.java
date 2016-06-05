@@ -22,17 +22,27 @@ import android.content.res.TypedArray;
 import android.os.Build;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
+import android.widget.TextView;
 
 public class SeekBarPreference extends DialogPreference {
 
     private static final String TAG = SeekBarPreference.class.getSimpleName();
+    private static final String ANDROID = "http://schemas.android.com/apk/res/android";
 
     private int padding;
+    private String unit;
+    private String explain;
 
+    private double currentValue;
     private SeekBar seekBar;
+    private TextView valueText;
+    private TextView unitText;
+    private LinearLayout valueLayout;
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public SeekBarPreference(Context context) {
@@ -62,11 +72,28 @@ public class SeekBarPreference extends DialogPreference {
 
     private void configure(Context context, AttributeSet attrs) {
         TypedArray attributes = context.obtainStyledAttributes(attrs, R.styleable.SeekBarPreference);
-        padding = attributes.getInt(R.styleable.SeekBarPreference_padding, 7);
+        try {
+            padding = attributes.getInt(R.styleable.SeekBarPreference_padding, 0);
+            unit = attributes.getString(R.styleable.SeekBarPreference_unit);
+            explain = attributes.getString(R.styleable.SeekBarPreference_explain);
+        } finally {
+            attributes.recycle();
+        }
     }
 
     private void init(Context context, AttributeSet attrs) {
         seekBar = new SeekBar(context, attrs);
+        valueText = new TextView(context);
+        valueText.setText(String.valueOf(currentValue));
+
+        unitText = new TextView(context);
+        unitText.setText(unit);
+
+        valueLayout = new LinearLayout(context);
+        valueLayout.setOrientation(LinearLayout.HORIZONTAL);
+        valueLayout.setGravity(Gravity.CENTER);
+        valueLayout.addView(valueText);
+        valueLayout.addView(unitText);
     }
 
     @Override
@@ -74,12 +101,36 @@ public class SeekBarPreference extends DialogPreference {
         LinearLayout layout = new LinearLayout(getContext());
         layout.setOrientation(LinearLayout.VERTICAL);
         layout.setPadding(padding, padding, padding, padding);
+
+        TextView explainText = new TextView(getContext());
+        explainText.setText(explain);
+        explainText.setGravity(Gravity.CENTER);
+        layout.addView(explainText);
+
         return layout;
     }
 
     @Override
     protected void onBindDialogView(View view) {
         super.onBindDialogView(view);
+        clearParents();
+
+        LinearLayout.LayoutParams params;
         LinearLayout layout = (LinearLayout) view;
+
+        params = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+        layout.addView(valueLayout, params);
+        layout.addView(seekBar, params);
     }
+
+    private void clearParents() {
+        ViewGroup parent = (ViewGroup) seekBar.getParent();
+        if (parent != null) {
+            parent.removeAllViews();
+        }
+    }
+
 }

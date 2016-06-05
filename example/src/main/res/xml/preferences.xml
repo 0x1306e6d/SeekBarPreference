@@ -19,6 +19,9 @@
 
     <com.yokkomi.commons.preference.seekbar.SeekBarPreference
         android:defaultValue="0"
+        android:summary="@string/seekbarpreference_summary"
         android:title="@string/seekbarpreference"
-        app:padding="8" />
+        app:explain="@string/seekbarpreference_explain"
+        app:padding="3"
+        app:unit="KM" />
 </PreferenceScreen>

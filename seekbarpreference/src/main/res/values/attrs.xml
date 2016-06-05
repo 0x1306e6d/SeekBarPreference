@@ -16,6 +16,8 @@
 
 <resources>
     <declare-styleable name="SeekBarPreference">
+        <attr name="unit" format="string" />
+        <attr name="explain" format="string" />
         <attr name="padding" format="integer" />
     </declare-styleable>
 </resources>
