@@ -43,6 +43,7 @@ public class FollowSeekBarPreference extends DialogPreference implements SeekBar
 
     private int currentValue;
     private SeekBar seekBar;
+    private TextView explainText;
     private TextView valueText;
     private TextView unitText;
     private LinearLayout valueLayout;
@@ -54,23 +55,18 @@ public class FollowSeekBarPreference extends DialogPreference implements SeekBar
 
     public FollowSeekBarPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
-        setup(context, attrs);
+        configure(context, attrs);
     }
 
     public FollowSeekBarPreference(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        setup(context, attrs);
+        configure(context, attrs);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public FollowSeekBarPreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        setup(context, attrs);
-    }
-
-    private void setup(Context context, AttributeSet attrs) {
         configure(context, attrs);
-        init(context, attrs);
     }
 
     private void configure(Context context, AttributeSet attrs) {
@@ -83,24 +79,6 @@ public class FollowSeekBarPreference extends DialogPreference implements SeekBar
         } finally {
             attributes.recycle();
         }
-    }
-
-    private void init(Context context, AttributeSet attrs) {
-        seekBar = new SeekBar(context, attrs);
-        seekBar.setMax(maxValue);
-        seekBar.setOnSeekBarChangeListener(this);
-
-        valueText = new TextView(context);
-        valueText.setText(String.valueOf(currentValue));
-
-        unitText = new TextView(context);
-        unitText.setText(unit);
-
-        valueLayout = new LinearLayout(context);
-        valueLayout.setOrientation(LinearLayout.HORIZONTAL);
-        valueLayout.setGravity(Gravity.CENTER);
-        valueLayout.addView(valueText);
-        valueLayout.addView(unitText);
     }
 
     /**
@@ -136,10 +114,25 @@ public class FollowSeekBarPreference extends DialogPreference implements SeekBar
         layout.setOrientation(LinearLayout.VERTICAL);
         layout.setPadding(padding, padding, padding, padding);
 
-        TextView explainText = new TextView(getContext());
+        explainText = new TextView(getContext());
         explainText.setText(explain);
         explainText.setGravity(Gravity.CENTER);
-        layout.addView(explainText);
+
+        seekBar = new SeekBar(getContext());
+        seekBar.setMax(maxValue);
+        seekBar.setOnSeekBarChangeListener(this);
+
+        valueText = new TextView(getContext());
+        valueText.setText(String.valueOf(currentValue));
+
+        unitText = new TextView(getContext());
+        unitText.setText(unit);
+
+        valueLayout = new LinearLayout(getContext());
+        valueLayout.setOrientation(LinearLayout.HORIZONTAL);
+        valueLayout.setGravity(Gravity.CENTER);
+        valueLayout.addView(valueText);
+        valueLayout.addView(unitText);
 
         return layout;
     }
@@ -151,6 +144,12 @@ public class FollowSeekBarPreference extends DialogPreference implements SeekBar
 
         LinearLayout.LayoutParams params;
         LinearLayout layout = (LinearLayout) view;
+
+        params = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+        layout.addView(explainText, params);
 
         params = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -188,8 +187,6 @@ public class FollowSeekBarPreference extends DialogPreference implements SeekBar
             if (callChangeListener(currentValue)) {
                 saveCurrentValue();
             }
-        } else {
-            setCurrentValue(getPersistedInt(currentValue));
         }
     }
 
