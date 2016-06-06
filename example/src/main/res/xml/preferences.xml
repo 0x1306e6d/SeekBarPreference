@@ -37,4 +37,15 @@
         app:maxValue="30"
         app:padding="3"
         app:unit="KM" />
+
+    <com.yokkomi.commons.preference.seekbar.FollowSeekBarPreference
+        android:defaultValue="0"
+        android:key="@string/followseekbarpreference"
+        android:summary="@string/followseekbarpreference_summary"
+        android:title="@string/followseekbarpreference"
+        app:explain="@string/followseekbarpreference_explain"
+        app:followEverytime="false"
+        app:maxValue="30"
+        app:padding="3"
+        app:unit="KM" />
 </PreferenceScreen>

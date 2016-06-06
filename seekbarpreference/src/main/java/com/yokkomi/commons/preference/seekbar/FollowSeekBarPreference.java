@@ -38,6 +38,7 @@ public class FollowSeekBarPreference extends DialogPreference implements SeekBar
 
     private int padding;
     private int maxValue;
+    private boolean everytime;
     private String unit;
     private String explain;
 
@@ -70,12 +71,13 @@ public class FollowSeekBarPreference extends DialogPreference implements SeekBar
     }
 
     private void configure(Context context, AttributeSet attrs) {
-        TypedArray attributes = context.obtainStyledAttributes(attrs, R.styleable.SeekBarPreference);
+        TypedArray attributes = context.obtainStyledAttributes(attrs, R.styleable.FollowSeekBarPreference);
         try {
-            maxValue = attributes.getInt(R.styleable.SeekBarPreference_maxValue, 100);
-            unit = attributes.getString(R.styleable.SeekBarPreference_unit);
-            explain = attributes.getString(R.styleable.SeekBarPreference_explain);
-            padding = attributes.getInt(R.styleable.SeekBarPreference_padding, 0);
+            maxValue = attributes.getInt(R.styleable.FollowSeekBarPreference_maxValue, 100);
+            unit = attributes.getString(R.styleable.FollowSeekBarPreference_unit);
+            explain = attributes.getString(R.styleable.FollowSeekBarPreference_explain);
+            padding = attributes.getInt(R.styleable.FollowSeekBarPreference_padding, 0);
+            everytime = attributes.getBoolean(R.styleable.FollowSeekBarPreference_followEverytime, true);
         } finally {
             attributes.recycle();
         }
@@ -155,7 +157,7 @@ public class FollowSeekBarPreference extends DialogPreference implements SeekBar
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
         );
-        params.gravity = Gravity.CENTER_HORIZONTAL;
+        params.gravity = Gravity.CENTER;
         layout.addView(valueLayout, params);
 
         params = new LinearLayout.LayoutParams(
@@ -203,7 +205,9 @@ public class FollowSeekBarPreference extends DialogPreference implements SeekBar
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         setCurrentValue(progress);
-        valueLayout.setX(calculateThumbX());
+        if (everytime) {
+            valueLayout.setX(calculateThumbX());
+        }
     }
 
     @Override
@@ -212,6 +216,10 @@ public class FollowSeekBarPreference extends DialogPreference implements SeekBar
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
+        if (!everytime) {
+            valueLayout.setX(calculateThumbX());
+            // TODO: 2016-06-06 Animation
+        }
     }
 
     private float calculateThumbX() {
