@@ -35,17 +35,17 @@ public class SeekBarPreference extends DialogPreference implements SeekBar.OnSee
 
     private static final String TAG = SeekBarPreference.class.getSimpleName();
 
-    private int padding;
-    private int maxValue;
-    private String unit;
-    private String explain;
+    protected int padding;
+    protected int maxValue;
+    protected String unit;
+    protected String explain;
 
-    private int currentValue;
-    private SeekBar seekBar;
-    private TextView explainText;
-    private TextView valueText;
-    private TextView unitText;
-    private LinearLayout valueLayout;
+    protected int currentValue;
+    protected SeekBar seekBar;
+    protected TextView explainText;
+    protected TextView valueText;
+    protected TextView unitText;
+    protected LinearLayout valueLayout;
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public SeekBarPreference(Context context) {
@@ -68,7 +68,7 @@ public class SeekBarPreference extends DialogPreference implements SeekBar.OnSee
         configure(context, attrs);
     }
 
-    private void configure(Context context, AttributeSet attrs) {
+    protected void configure(Context context, AttributeSet attrs) {
         TypedArray attributes = context.obtainStyledAttributes(attrs, R.styleable.SeekBarPreference);
         try {
             maxValue = attributes.getInt(R.styleable.SeekBarPreference_maxValue, 100);
@@ -86,6 +86,13 @@ public class SeekBarPreference extends DialogPreference implements SeekBar.OnSee
      * @param currentValue The value to set
      */
     public void setCurrentValue(int currentValue) {
+        if (currentValue < 0) {
+            currentValue = 0;
+        }
+        if (currentValue > seekBar.getMax()) {
+            currentValue = seekBar.getMax();
+        }
+
         this.currentValue = currentValue;
         this.valueText.setText(String.valueOf(currentValue));
     }
@@ -139,33 +146,40 @@ public class SeekBarPreference extends DialogPreference implements SeekBar.OnSee
     @Override
     protected void onBindDialogView(View view) {
         super.onBindDialogView(view);
+        Log.d(TAG, "onBindDialogView");
+
         clearParents();
 
-        LinearLayout.LayoutParams params;
         LinearLayout layout = (LinearLayout) view;
 
-        params = new LinearLayout.LayoutParams(
+        layout.addView(explainText, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
-        );
-        layout.addView(explainText, params);
-
-        layout.addView(valueLayout, params);
-        layout.addView(seekBar, params);
+        ));
+        layout.addView(valueLayout, new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        ));
+        layout.addView(seekBar, new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        ));
 
         updateView();
     }
 
-    private void clearParents() {
+    protected void clearParents() {
         ViewParent oldParent = seekBar.getParent();
         if (oldParent != null) {
             ((ViewGroup) oldParent).removeAllViews();
         }
     }
 
-    private void updateView() {
+    protected void updateView() {
         seekBar.setProgress(currentValue);
         valueText.setText(String.valueOf(currentValue));
+
+        notifyChanged();
     }
 
     @Override
@@ -181,7 +195,7 @@ public class SeekBarPreference extends DialogPreference implements SeekBar.OnSee
         }
     }
 
-    private void resetToPersisted() {
+    protected void resetToPersisted() {
         int persisted = getPersistedInt(currentValue);
         setCurrentValue(persisted);
     }

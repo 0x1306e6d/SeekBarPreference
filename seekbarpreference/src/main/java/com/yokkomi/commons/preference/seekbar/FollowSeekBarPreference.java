@@ -18,216 +18,56 @@ package com.yokkomi.commons.preference.seekbar;
 
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.preference.DialogPreference;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
-import android.widget.TextView;
 
-public class FollowSeekBarPreference extends DialogPreference implements SeekBar.OnSeekBarChangeListener {
+public class FollowSeekBarPreference extends SeekBarPreference {
 
     private static final String TAG = FollowSeekBarPreference.class.getSimpleName();
 
-    private int padding;
-    private int maxValue;
-    private String unit;
-    private String explain;
-
-    private int currentValue;
-    private SeekBar seekBar;
-    private TextView explainText;
-    private TextView valueText;
-    private TextView unitText;
-    private LinearLayout valueLayout;
-
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public FollowSeekBarPreference(Context context) {
-        this(context, null);
+        super(context);
     }
 
     public FollowSeekBarPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
-        configure(context, attrs);
     }
 
     public FollowSeekBarPreference(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        configure(context, attrs);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public FollowSeekBarPreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        configure(context, attrs);
-    }
-
-    private void configure(Context context, AttributeSet attrs) {
-        TypedArray attributes = context.obtainStyledAttributes(attrs, R.styleable.FollowSeekBarPreference);
-        try {
-            maxValue = attributes.getInt(R.styleable.FollowSeekBarPreference_maxValue, 100);
-            unit = attributes.getString(R.styleable.FollowSeekBarPreference_unit);
-            explain = attributes.getString(R.styleable.FollowSeekBarPreference_explain);
-            padding = attributes.getInt(R.styleable.FollowSeekBarPreference_padding, 0);
-        } finally {
-            attributes.recycle();
-        }
-    }
-
-    /**
-     * Set currentValue.
-     *
-     * @param currentValue The value to set
-     */
-    public void setCurrentValue(int currentValue) {
-        if (currentValue < 0) {
-            currentValue = 0;
-        }
-        if (currentValue > seekBar.getMax()) {
-            currentValue = seekBar.getMax();
-        }
-
-        this.currentValue = currentValue;
-        this.valueText.setText(String.valueOf(currentValue));
-    }
-
-    /**
-     * Save currentValue to the {@link android.content.SharedPreferences}.
-     */
-    public void saveCurrentValue() {
-        final boolean wasBlocking = shouldDisableDependents();
-
-        if (shouldPersist()) {
-            persistInt(currentValue);
-            Log.d(TAG, "Persist value " + currentValue);
-        }
-
-        final boolean isBlocking = shouldDisableDependents();
-        if (isBlocking != wasBlocking) {
-            notifyDependencyChange(isBlocking);
-        }
-    }
-
-    @Override
-    protected View onCreateDialogView() {
-        LinearLayout layout = new LinearLayout(getContext());
-        layout.setOrientation(LinearLayout.VERTICAL);
-        layout.setPadding(padding, padding, padding, padding);
-
-        explainText = new TextView(getContext());
-        explainText.setText(explain);
-        explainText.setGravity(Gravity.CENTER);
-
-        seekBar = new SeekBar(getContext());
-        seekBar.setMax(maxValue);
-        seekBar.setOnSeekBarChangeListener(this);
-
-        valueText = new TextView(getContext());
-        valueText.setText(String.valueOf(currentValue));
-
-        unitText = new TextView(getContext());
-        unitText.setText(unit);
-
-        valueLayout = new LinearLayout(getContext());
-        valueLayout.setOrientation(LinearLayout.HORIZONTAL);
-        valueLayout.setGravity(Gravity.CENTER);
-        valueLayout.addView(valueText);
-        valueLayout.addView(unitText);
-
-        return layout;
     }
 
     @Override
     protected void onBindDialogView(View view) {
         super.onBindDialogView(view);
-        clearParents();
+        Log.d(TAG, "onBindDialogView");
 
-        LinearLayout.LayoutParams params;
-        LinearLayout layout = (LinearLayout) view;
-
-        params = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-        );
-        layout.addView(explainText, params);
-
-        params = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-        );
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) valueLayout.getLayoutParams();
         params.gravity = Gravity.CENTER;
-        layout.addView(valueLayout, params);
-
-        params = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-        );
-        layout.addView(seekBar, params);
+        params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+        params.width = ViewGroup.LayoutParams.WRAP_CONTENT;
+        valueLayout.setLayoutParams(params);
 
         updateView();
-    }
-
-    private void clearParents() {
-        ViewParent oldParent = seekBar.getParent();
-        if (oldParent != null) {
-            ((ViewGroup) oldParent).removeAllViews();
-        }
-    }
-
-    private void updateView() {
-        seekBar.setProgress(currentValue);
-        valueText.setText(String.valueOf(currentValue));
-    }
-
-    @Override
-    protected void onDialogClosed(boolean positiveResult) {
-        super.onDialogClosed(positiveResult);
-
-        if (positiveResult) {
-            if (callChangeListener(currentValue)) {
-                saveCurrentValue();
-            }
-        } else {
-            resetToPersisted();
-        }
-    }
-
-    private void resetToPersisted() {
-        int persisted = getPersistedInt(currentValue);
-        setCurrentValue(persisted);
-    }
-
-    @Override
-    protected void onSetInitialValue(boolean restorePersistedValue, Object defaultValue) {
-        if (restorePersistedValue) {
-            currentValue = getPersistedInt(currentValue);
-        } else {
-            currentValue = (int) defaultValue;
-            saveCurrentValue();
-        }
     }
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         setCurrentValue(progress);
         valueLayout.setX(calculateThumbX());
-    }
-
-    @Override
-    public void onStartTrackingTouch(SeekBar seekBar) {
-        // Do Nothing
-    }
-
-    @Override
-    public void onStopTrackingTouch(SeekBar seekBar) {
-        // Do Nothing
     }
 
     private float calculateThumbX() {
