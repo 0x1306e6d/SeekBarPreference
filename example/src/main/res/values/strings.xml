@@ -19,5 +19,9 @@
     <string name="seekbarpreference">SeekBarPreference</string>
     <string name="seekbarpreference_summary">Basic SeekBarPreference Example</string>
     <string name="seekbarpreference_explain">좌 우로 SeekBar을 움직이십시오.</string>
+
+    <string name="followseekbarpreference">FollowSeekBarPreference</string>
+    <string name="followseekbarpreference_summary">FollowSeekBarPreference Example</string>
+    <string name="followseekbarpreference_explain">좌 우로 SeekBar을 움직이십시오.</string>
     <string name="settings">Settings</string>
 </resources>

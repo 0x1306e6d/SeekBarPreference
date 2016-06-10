@@ -19,6 +19,7 @@ package com.yokkomi.commons.preference.seekbar;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;
@@ -31,9 +32,9 @@ import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-public class SeekBarPreference extends DialogPreference implements SeekBar.OnSeekBarChangeListener {
+public class FollowSeekBarPreference extends DialogPreference implements SeekBar.OnSeekBarChangeListener {
 
-    private static final String TAG = SeekBarPreference.class.getSimpleName();
+    private static final String TAG = FollowSeekBarPreference.class.getSimpleName();
 
     private int padding;
     private int maxValue;
@@ -42,64 +43,42 @@ public class SeekBarPreference extends DialogPreference implements SeekBar.OnSee
 
     private int currentValue;
     private SeekBar seekBar;
+    private TextView explainText;
     private TextView valueText;
     private TextView unitText;
     private LinearLayout valueLayout;
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public SeekBarPreference(Context context) {
+    public FollowSeekBarPreference(Context context) {
         this(context, null);
     }
 
-    public SeekBarPreference(Context context, AttributeSet attrs) {
+    public FollowSeekBarPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
-        setup(context, attrs);
+        configure(context, attrs);
     }
 
-    public SeekBarPreference(Context context, AttributeSet attrs, int defStyleAttr) {
+    public FollowSeekBarPreference(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        setup(context, attrs);
+        configure(context, attrs);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public SeekBarPreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public FollowSeekBarPreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        setup(context, attrs);
-    }
-
-    private void setup(Context context, AttributeSet attrs) {
         configure(context, attrs);
-        init(context, attrs);
     }
 
     private void configure(Context context, AttributeSet attrs) {
-        TypedArray attributes = context.obtainStyledAttributes(attrs, R.styleable.SeekBarPreference);
+        TypedArray attributes = context.obtainStyledAttributes(attrs, R.styleable.FollowSeekBarPreference);
         try {
-            maxValue = attributes.getInt(R.styleable.SeekBarPreference_maxValue, 100);
-            unit = attributes.getString(R.styleable.SeekBarPreference_unit);
-            explain = attributes.getString(R.styleable.SeekBarPreference_explain);
-            padding = attributes.getInt(R.styleable.SeekBarPreference_padding, 0);
+            maxValue = attributes.getInt(R.styleable.FollowSeekBarPreference_maxValue, 100);
+            unit = attributes.getString(R.styleable.FollowSeekBarPreference_unit);
+            explain = attributes.getString(R.styleable.FollowSeekBarPreference_explain);
+            padding = attributes.getInt(R.styleable.FollowSeekBarPreference_padding, 0);
         } finally {
             attributes.recycle();
         }
-    }
-
-    private void init(Context context, AttributeSet attrs) {
-        seekBar = new SeekBar(context, attrs);
-        seekBar.setMax(maxValue);
-        seekBar.setOnSeekBarChangeListener(this);
-
-        valueText = new TextView(context);
-        valueText.setText(String.valueOf(currentValue));
-
-        unitText = new TextView(context);
-        unitText.setText(unit);
-
-        valueLayout = new LinearLayout(context);
-        valueLayout.setOrientation(LinearLayout.HORIZONTAL);
-        valueLayout.setGravity(Gravity.CENTER);
-        valueLayout.addView(valueText);
-        valueLayout.addView(unitText);
     }
 
     /**
@@ -135,10 +114,25 @@ public class SeekBarPreference extends DialogPreference implements SeekBar.OnSee
         layout.setOrientation(LinearLayout.VERTICAL);
         layout.setPadding(padding, padding, padding, padding);
 
-        TextView explainText = new TextView(getContext());
+        explainText = new TextView(getContext());
         explainText.setText(explain);
         explainText.setGravity(Gravity.CENTER);
-        layout.addView(explainText);
+
+        seekBar = new SeekBar(getContext());
+        seekBar.setMax(maxValue);
+        seekBar.setOnSeekBarChangeListener(this);
+
+        valueText = new TextView(getContext());
+        valueText.setText(String.valueOf(currentValue));
+
+        unitText = new TextView(getContext());
+        unitText.setText(unit);
+
+        valueLayout = new LinearLayout(getContext());
+        valueLayout.setOrientation(LinearLayout.HORIZONTAL);
+        valueLayout.setGravity(Gravity.CENTER);
+        valueLayout.addView(valueText);
+        valueLayout.addView(unitText);
 
         return layout;
     }
@@ -155,7 +149,19 @@ public class SeekBarPreference extends DialogPreference implements SeekBar.OnSee
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
         );
+        layout.addView(explainText, params);
+
+        params = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+        params.gravity = Gravity.CENTER;
         layout.addView(valueLayout, params);
+
+        params = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        );
         layout.addView(seekBar, params);
 
         updateView();
@@ -169,8 +175,8 @@ public class SeekBarPreference extends DialogPreference implements SeekBar.OnSee
     }
 
     private void updateView() {
-        valueText.setText(String.valueOf(currentValue));
         seekBar.setProgress(currentValue);
+        valueText.setText(String.valueOf(currentValue));
     }
 
     @Override
@@ -181,8 +187,6 @@ public class SeekBarPreference extends DialogPreference implements SeekBar.OnSee
             if (callChangeListener(currentValue)) {
                 saveCurrentValue();
             }
-        } else {
-            setCurrentValue(getPersistedInt(currentValue));
         }
     }
 
@@ -199,14 +203,24 @@ public class SeekBarPreference extends DialogPreference implements SeekBar.OnSee
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         setCurrentValue(progress);
+        valueLayout.setX(calculateThumbX());
     }
 
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
-
+        // Do Nothing
     }
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
+        // Do Nothing
+    }
+
+    private float calculateThumbX() {
+        float x;
+        Drawable thumb = seekBar.getThumb();
+        float centerX = thumb.getBounds().exactCenterX();
+        x = centerX - (thumb.getBounds().width() / 2.0f);
+        return x;
     }
 }
