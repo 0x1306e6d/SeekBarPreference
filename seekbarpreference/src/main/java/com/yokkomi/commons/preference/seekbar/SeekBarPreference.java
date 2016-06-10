@@ -42,6 +42,7 @@ public class SeekBarPreference extends DialogPreference implements SeekBar.OnSee
 
     private int currentValue;
     private SeekBar seekBar;
+    private TextView explainText;
     private TextView valueText;
     private TextView unitText;
     private LinearLayout valueLayout;
@@ -53,23 +54,18 @@ public class SeekBarPreference extends DialogPreference implements SeekBar.OnSee
 
     public SeekBarPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
-        setup(context, attrs);
+        configure(context, attrs);
     }
 
     public SeekBarPreference(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        setup(context, attrs);
+        configure(context, attrs);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public SeekBarPreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        setup(context, attrs);
-    }
-
-    private void setup(Context context, AttributeSet attrs) {
         configure(context, attrs);
-        init(context, attrs);
     }
 
     private void configure(Context context, AttributeSet attrs) {
@@ -82,24 +78,6 @@ public class SeekBarPreference extends DialogPreference implements SeekBar.OnSee
         } finally {
             attributes.recycle();
         }
-    }
-
-    private void init(Context context, AttributeSet attrs) {
-        seekBar = new SeekBar(context, attrs);
-        seekBar.setMax(maxValue);
-        seekBar.setOnSeekBarChangeListener(this);
-
-        valueText = new TextView(context);
-        valueText.setText(String.valueOf(currentValue));
-
-        unitText = new TextView(context);
-        unitText.setText(unit);
-
-        valueLayout = new LinearLayout(context);
-        valueLayout.setOrientation(LinearLayout.HORIZONTAL);
-        valueLayout.setGravity(Gravity.CENTER);
-        valueLayout.addView(valueText);
-        valueLayout.addView(unitText);
     }
 
     /**
@@ -135,10 +113,25 @@ public class SeekBarPreference extends DialogPreference implements SeekBar.OnSee
         layout.setOrientation(LinearLayout.VERTICAL);
         layout.setPadding(padding, padding, padding, padding);
 
-        TextView explainText = new TextView(getContext());
+        explainText = new TextView(getContext());
         explainText.setText(explain);
         explainText.setGravity(Gravity.CENTER);
-        layout.addView(explainText);
+
+        seekBar = new SeekBar(getContext());
+        seekBar.setMax(maxValue);
+        seekBar.setOnSeekBarChangeListener(this);
+
+        valueText = new TextView(getContext());
+        valueText.setText(String.valueOf(currentValue));
+
+        unitText = new TextView(getContext());
+        unitText.setText(unit);
+
+        valueLayout = new LinearLayout(getContext());
+        valueLayout.setOrientation(LinearLayout.HORIZONTAL);
+        valueLayout.setGravity(Gravity.CENTER);
+        valueLayout.addView(valueText);
+        valueLayout.addView(unitText);
 
         return layout;
     }
@@ -155,6 +148,8 @@ public class SeekBarPreference extends DialogPreference implements SeekBar.OnSee
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
         );
+        layout.addView(explainText, params);
+
         layout.addView(valueLayout, params);
         layout.addView(seekBar, params);
 
@@ -181,8 +176,6 @@ public class SeekBarPreference extends DialogPreference implements SeekBar.OnSee
             if (callChangeListener(currentValue)) {
                 saveCurrentValue();
             }
-        } else {
-            setCurrentValue(getPersistedInt(currentValue));
         }
     }
 
@@ -203,10 +196,11 @@ public class SeekBarPreference extends DialogPreference implements SeekBar.OnSee
 
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
-
+        // Do Nothing
     }
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
+        // Do Nothing
     }
 }
