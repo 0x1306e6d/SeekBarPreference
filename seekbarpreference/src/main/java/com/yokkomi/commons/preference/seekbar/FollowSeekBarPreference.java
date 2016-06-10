@@ -22,6 +22,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -55,6 +56,7 @@ public class FollowSeekBarPreference extends SeekBarPreference {
         Log.d(TAG, "onBindDialogView");
 
         LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) valueLayout.getLayoutParams();
+        params.gravity = Gravity.CENTER;
         params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
         params.width = ViewGroup.LayoutParams.WRAP_CONTENT;
         valueLayout.setLayoutParams(params);

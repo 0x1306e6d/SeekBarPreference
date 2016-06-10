@@ -150,17 +150,20 @@ public class SeekBarPreference extends DialogPreference implements SeekBar.OnSee
 
         clearParents();
 
-        LinearLayout.LayoutParams params;
         LinearLayout layout = (LinearLayout) view;
 
-        params = new LinearLayout.LayoutParams(
+        layout.addView(explainText, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
-        );
-        layout.addView(explainText, params);
-
-        layout.addView(valueLayout, params);
-        layout.addView(seekBar, params);
+        ));
+        layout.addView(valueLayout, new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        ));
+        layout.addView(seekBar, new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        ));
 
         updateView();
     }
