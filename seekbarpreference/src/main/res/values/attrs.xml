@@ -33,6 +33,5 @@
         <attr name="unit" />
         <attr name="explain" />
         <attr name="padding" />
-        <attr name="followEverytime" format="boolean" />
     </declare-styleable>
 </resources>

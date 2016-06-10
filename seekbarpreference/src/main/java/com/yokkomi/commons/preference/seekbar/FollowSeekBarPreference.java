@@ -38,7 +38,6 @@ public class FollowSeekBarPreference extends DialogPreference implements SeekBar
 
     private int padding;
     private int maxValue;
-    private boolean everytime;
     private String unit;
     private String explain;
 
@@ -77,7 +76,6 @@ public class FollowSeekBarPreference extends DialogPreference implements SeekBar
             unit = attributes.getString(R.styleable.FollowSeekBarPreference_unit);
             explain = attributes.getString(R.styleable.FollowSeekBarPreference_explain);
             padding = attributes.getInt(R.styleable.FollowSeekBarPreference_padding, 0);
-            everytime = attributes.getBoolean(R.styleable.FollowSeekBarPreference_followEverytime, true);
         } finally {
             attributes.recycle();
         }
@@ -205,21 +203,17 @@ public class FollowSeekBarPreference extends DialogPreference implements SeekBar
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         setCurrentValue(progress);
-        if (everytime) {
-            valueLayout.setX(calculateThumbX());
-        }
+        valueLayout.setX(calculateThumbX());
     }
 
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
+        // Do Nothing
     }
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
-        if (!everytime) {
-            valueLayout.setX(calculateThumbX());
-            // TODO: 2016-06-06 Animation
-        }
+        // Do Nothing
     }
 
     private float calculateThumbX() {
