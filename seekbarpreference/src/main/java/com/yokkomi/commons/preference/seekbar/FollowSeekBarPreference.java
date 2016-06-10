@@ -87,6 +87,13 @@ public class FollowSeekBarPreference extends DialogPreference implements SeekBar
      * @param currentValue The value to set
      */
     public void setCurrentValue(int currentValue) {
+        if (currentValue < 0) {
+            currentValue = 0;
+        }
+        if (currentValue > seekBar.getMax()) {
+            currentValue = seekBar.getMax();
+        }
+
         this.currentValue = currentValue;
         this.valueText.setText(String.valueOf(currentValue));
     }
@@ -187,7 +194,14 @@ public class FollowSeekBarPreference extends DialogPreference implements SeekBar
             if (callChangeListener(currentValue)) {
                 saveCurrentValue();
             }
+        } else {
+            resetToPersisted();
         }
+    }
+
+    private void resetToPersisted() {
+        int persisted = getPersistedInt(currentValue);
+        setCurrentValue(persisted);
     }
 
     @Override

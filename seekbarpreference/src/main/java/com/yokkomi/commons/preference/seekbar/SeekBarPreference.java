@@ -164,8 +164,8 @@ public class SeekBarPreference extends DialogPreference implements SeekBar.OnSee
     }
 
     private void updateView() {
-        valueText.setText(String.valueOf(currentValue));
         seekBar.setProgress(currentValue);
+        valueText.setText(String.valueOf(currentValue));
     }
 
     @Override
@@ -176,7 +176,14 @@ public class SeekBarPreference extends DialogPreference implements SeekBar.OnSee
             if (callChangeListener(currentValue)) {
                 saveCurrentValue();
             }
+        } else {
+            resetToPersisted();
         }
+    }
+
+    private void resetToPersisted() {
+        int persisted = getPersistedInt(currentValue);
+        setCurrentValue(persisted);
     }
 
     @Override
