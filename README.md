@@ -1,8 +1,8 @@
 # SeekBarPreference
 SeekBarPreference is an android library to help using preference with SeekBar.
 
-![SeekBarPreference](https://github.com/0x1306e6d/SeekBarPreference/screenshot/SeekBarPreference.png)
-![FollowSeekBarPreference](https://github.com/0x1306e6d/SeekBarPreference/screenshot/FollowSeekBarPreference.png)
+![SeekBarPreference](screenshot/SeekBarPreference.png)
+![FollowSeekBarPreference](screenshot/FollowSeekBarPreference.png)
 
 ## Usage
 You can use SeekBarPreference on gradle.
