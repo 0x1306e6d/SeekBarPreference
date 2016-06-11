@@ -15,6 +15,7 @@
  */
 
 apply plugin: 'com.android.library'
+apply plugin: 'com.novoda.bintray-release'
 
 android {
     compileSdkVersion 23
@@ -38,4 +39,22 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.4.0'
+}
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.novoda:bintray-release:0.3.4'
+    }
+}
+
+publish {
+    userOrg = '0x1306e6d'
+    groupId = 'com.yokkomi'
+    artifactId = 'seekbar-preference'
+    publishVersion = '1.0'
+    desc = 'Android SeekBar Preference Library'
+    website = 'https://github.com/0x1306e6d/SeekBarPreference'
 }
